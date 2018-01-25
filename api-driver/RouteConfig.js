@@ -1,0 +1,1 @@
+"use strict";var Handlebars=require("handlebars"),RouteConfig=function(e,t){var i=e.split(".");this.rawConfig=t,this.fullName=e,this.name=i.pop(),this.namespaceSequence=i,this.template=Handlebars.compile(JSON.stringify(t),{strict:!0})};RouteConfig.prototype.getJson=function(e){return JSON.parse(this.template(e))},module.exports=RouteConfig;

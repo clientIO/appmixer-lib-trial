@@ -1,2 +1,2 @@
-# appmixer-lib-trial
-Appmixer lib trial
+# appmixer-lib
+Shared library for appmixer components

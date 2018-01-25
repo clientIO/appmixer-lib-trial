@@ -1,0 +1,1 @@
+"use strict";function*allInputLinks(n,t=!0){const o=new Set;for(let r in n){if(!n.hasOwnProperty(r))continue;const e=n[r];for(let n in e){if(!e.hasOwnProperty(n))continue;const i=Array.isArray(e[n])?e[n]:[e[n]];for(let e of i){const i=n+e;t&&o.has(i)||(o.add(i),yield{id:n,port:e,inPortName:r})}}}}module.exports={ComponentDescriptor:{allInputLinks:allInputLinks}};

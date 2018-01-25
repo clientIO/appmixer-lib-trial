@@ -1,0 +1,1 @@
+"use strict";const check=require("check-types");module.exports.addUniqueToArray=function(e,r){if(check.assert.array(e,"Invalid source array."),Array.isArray(r)&&r.length>1){const a=new Set(r.map(e=>e.value));for(let s of e)a.has(s.value)||(a.add(s.value),r.push(s))}return e||[]};
