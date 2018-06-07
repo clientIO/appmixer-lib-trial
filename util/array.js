@@ -1,1 +1,1 @@
-"use strict";const check=require("check-types");module.exports.addUniqueToArray=function(e,r){if(check.assert.array(e,"Invalid source array."),Array.isArray(r)&&r.length>1){const a=new Set(r.map(e=>e.value));for(let s of e)a.has(s.value)||(a.add(s.value),r.push(s))}return e||[]};
+"use strict";const check=require("check-types");module.exports.addUniqueToArray=function(e,a){check.assert.array(e,"Invalid source array."),check.assert.array(a,"Invalid target array.");const r=new Set(a.map(e=>e.value));for(let t of e)r.has(t.value)||(r.add(t.value),a.push(t));return a||[]};
