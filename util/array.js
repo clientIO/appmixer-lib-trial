@@ -1,1 +1,23 @@
-"use strict";const check=require("check-types");module.exports.addUniqueToArray=function(e,a){check.assert.array(e,"Invalid source array."),check.assert.array(a,"Invalid target array.");const r=new Set(a.map(e=>e.value));for(let t of e)r.has(t.value)||(r.add(t.value),a.push(t));return a||[]};
+'use strict';
+const check = require('check-types');
+
+/**
+ * @param {Array} source
+ * @param {*} target
+ * @return {*|Array}
+ * @throws Error
+ */
+module.exports.addUniqueToArray = function(source, target) {
+
+    check.assert.array(source, 'Invalid source array.');
+    check.assert.array(target, 'Invalid target array.');
+
+    const set = new Set(target.map(i => i.value));
+    for (let src of source) {
+        if (!set.has(src.value)) {
+            set.add(src.value);
+            target.push(src);
+        }
+    }
+    return target || [];
+};

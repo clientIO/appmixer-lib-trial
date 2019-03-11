@@ -1,1 +1,53 @@
-"use strict";var RouteConfig=require("./RouteConfig"),RouterMap=function(){this.routesMap={},this.onRouteConfigCreated=null};module.exports.RouterMap=RouterMap,RouterMap.prototype.initialize=function(o){if("object"!=typeof o)throw new Error("Bad type of RouterMap configuration");var t;this.onRouteConfigCreated=o.onRouteConfigCreated,this.configuration=o.routes;var e="function"==typeof this.onRouteConfigCreated;for(let o in this.configuration)if(this.configuration.hasOwnProperty(o)){t=this.configuration[o];var i=new RouteConfig(o,t);e&&this.onRouteConfigCreated(i),this.routesMap[o]=i}},RouterMap.prototype.getRouteJson=function(o,t){var e=this.routesMap[o];return e?e.getJson(t):null};
+'use strict';
+var RouteConfig = require('./RouteConfig');
+
+/**
+ * Router map.
+ * @constructor
+ */
+var RouterMap = function() {
+    this.routesMap = {};
+    this.onRouteConfigCreated = null;
+};
+
+module.exports.RouterMap = RouterMap;
+
+/**
+ * Initialize router map.
+ * @param {Object} configuration
+ */
+RouterMap.prototype.initialize = function(configuration) {
+
+    if (typeof configuration !== 'object') {
+        throw new Error('Bad type of RouterMap configuration');
+    }
+
+    this.onRouteConfigCreated = configuration.onRouteConfigCreated;
+    this.configuration = configuration.routes;
+
+    var item;
+    var hasCreateCallback = typeof this.onRouteConfigCreated === 'function';
+
+    for (let key in this.configuration) {
+        if (this.configuration.hasOwnProperty(key)) {
+            item = this.configuration[key];
+            var routeConfig = new RouteConfig(key, item);
+            if (hasCreateCallback) {
+                this.onRouteConfigCreated(routeConfig);
+            }
+            this.routesMap[key] = routeConfig;
+        }
+    }
+};
+
+/**
+ * Get route JSON.
+ * @param {string} name
+ * @param {Object} parameters
+ * @returns {null}
+ */
+RouterMap.prototype.getRouteJson = function(name, parameters) {
+
+    var routeConfig = this.routesMap[name];
+    return routeConfig ? routeConfig.getJson(parameters) : null;
+};

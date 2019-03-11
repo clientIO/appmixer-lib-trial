@@ -1,1 +1,41 @@
-"use strict";var Handlebars=require("handlebars"),RouteConfig=function(e,t){var i=e.split(".");this.rawConfig=t,this.fullName=e,this.name=i.pop(),this.namespaceSequence=i,this.template=Handlebars.compile(JSON.stringify(t),{strict:!0})};RouteConfig.prototype.getJson=function(e){return JSON.parse(this.template(e))},module.exports=RouteConfig;
+'use strict';
+
+const querystring = require('querystring');
+const Handlebars = require('handlebars');
+Handlebars.registerHelper('escapeurl', function(url) {
+
+    return new Handlebars.SafeString(querystring.escape(url));
+});
+
+/**
+ * Route config.
+ * @param fullName
+ * @param {Object} routeConfig
+ * @param {String} [routeConfig.customImplementationsModule]
+ * @constructor
+ */
+const RouteConfig = function(fullName, routeConfig) {
+
+    const fullNameArray = fullName.split('.');
+
+    /**
+     * @type {Object}
+     * @property customImplementation
+     */
+    this.rawConfig = routeConfig;
+
+    this.fullName = fullName;
+    // last string after '.' is the name of the route
+    this.name = fullNameArray.pop();
+    // the rest of array (if any) is the ordered array of namespace hierarchy
+    this.namespaceSequence = fullNameArray;
+    // Handlebars template
+    this.template = Handlebars.compile(JSON.stringify(routeConfig), { strict: true });
+};
+
+RouteConfig.prototype.getJson = function(parameters) {
+
+    return JSON.parse(this.template(parameters));
+};
+
+module.exports = RouteConfig;

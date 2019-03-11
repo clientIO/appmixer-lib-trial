@@ -1,6 +1,6 @@
 {
     "name": "appmixer-lib",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Shared lib folder.",
     "main": "appmixer-lib.js",
     "scripts": {
@@ -10,10 +10,13 @@
         "bluebird": "^3.5.1",
         "boom": "^7.2.0",
         "check-types": "^7.1.5",
+        "content-type": "^1.0.4",
         "handlebars": "^4.0.5",
         "metrohash": "^2.3.0",
-        "mongodb": "^2.2.33",
-        "request": "^2.67.0"
+        "moment": "^2.22.2",
+        "mongodb": "^3.1.1",
+        "redis": "^2.8.0",
+        "request": "^2.88.0"
     },
     "devDependencies": {
         "chai": "^4.0.2",

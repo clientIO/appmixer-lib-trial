@@ -1,1 +1,65 @@
-"use strict";const check=require("check-types"),mongodb=require("mongodb"),MongoClient=mongodb.MongoClient,ObjectID=mongodb.ObjectID,Promise=require("bluebird"),fs=require("fs"),Logger=require("mongodb").Logger;let db=null;module.exports.db=function(){if(null===db)throw new Error("Mongo DB not connected!");return db},module.exports.ObjectID=ObjectID,module.exports.connect=async function(e){if(process.env.LOG_LEVEL&&Logger.setLevel(process.env.LOG_LEVEL.toLowerCase()),null!==db)return db;check.assert.object(e,"Invalid connection object."),e.uri?check.assert.string(e.uri,"Invalid connection.uri"):(check.assert.string(e.host,"Invalid connection.host."),check.assert.number(e.port,"Invalid connection.port."),check.assert.string(e.dbName,"Invalid connection.dbName."));let o=e.uri||"mongodb://"+e.host+":"+e.port+"/"+e.dbName,n={promiseLibrary:Promise};return e.sslCAPath&&(n.sslCA=fs.readFileSync(e.sslCAPath),e.hasOwnProperty("sslValidate")&&(n.sslValidate=e.sslValidate),e.hasOwnProperty("useSSL")&&null!==e.useSSL&&(n.ssl=e.useSSL)),db=await MongoClient.connect(o,n)};
+'use strict';
+const check = require('check-types');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+const ObjectID = mongodb.ObjectID;
+const Promise = require('bluebird');
+const fs = require('fs');
+const Logger = require('mongodb').Logger;
+
+let db = null;
+
+module.exports.db = function() {
+
+    if (db === null) {
+        throw new Error('Mongo DB not connected!');
+    }
+    return db;
+};
+
+module.exports.ObjectID = ObjectID;
+
+/**
+ * Connect to Mongo DB.
+ * @param {Object} connection
+ * @param {string} connection.uri
+ * @param {string} connection.sslCAPath
+ * @param {boolean} connection.sslValidate
+ * @return {Promise}
+ */
+module.exports.connect = async function(connection) {
+
+    // Set debug level
+    if (process.env.LOG_LEVEL) {
+        Logger.setLevel(process.env.LOG_LEVEL.toLowerCase());
+    }
+
+    if (db !== null) {
+        return db;
+    }
+
+    check.assert.object(connection, 'Invalid connection object.');
+    check.assert.string(connection.uri, 'Invalid connection.uri');
+
+    let options = {
+        promiseLibrary: Promise,
+        useNewUrlParser: true
+    };
+
+    // file to cert
+    if (connection.sslCAPath) {
+        options.sslCA = fs.readFileSync(connection.sslCAPath);
+        if (connection.hasOwnProperty('sslValidate')) {
+            options.sslValidate = connection.sslValidate;
+        }
+        if (connection.hasOwnProperty('useSSL') && connection.useSSL !== null) {
+            options.ssl = connection.useSSL;
+        }
+    }
+    
+    console.log('Connecting to Mongo with URI: ' + connection.uri);
+
+    const client = await MongoClient.connect(connection.uri, options);
+    db = client.db();
+    return db;
+};

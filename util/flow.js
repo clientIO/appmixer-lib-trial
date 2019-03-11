@@ -1,1 +1,95 @@
-"use strict";function*allInputLinks(n,t=!0){const i=new Set;for(let o in n){if(!n.hasOwnProperty(o))continue;const e=n[o];for(let n in e){if(!e.hasOwnProperty(n))continue;const r=Array.isArray(e[n])?e[n]:[e[n]];for(let e of r){const r=n+e;t&&i.has(r)||(i.add(r),yield{id:n,port:e,inPortName:o})}}}}function*allOutputLinks(n,t,i){for(let o in n){if(!n.hasOwnProperty(o))continue;let e=n[o].source;for(let n in e){if(!e.hasOwnProperty(n))continue;let r=e[n];for(let e in r){if(!r.hasOwnProperty(e))continue;if(e!==t)continue;-1!==(Array.isArray(r[e])?r[e]:[r[e]]).indexOf(i)&&(yield{componentId:o,inputPort:n})}}}}module.exports={ComponentDescriptor:{allInputLinks:allInputLinks,allOutputLinks:allOutputLinks}};
+'use strict';
+
+/**
+ * Returns generator, which loops over unique input links
+ * componentId+outPort is the key to uniqueness
+ * @param {Object} source
+ * @param {boolean} [checkUniqueIdPort]
+ * @yield {{
+ *        id: string,
+ *        port: string,
+ *        inPortName: string
+ *        }}
+ */
+function* allInputLinks(source, checkUniqueIdPort = true) {
+
+    const resolvedScopes = new Set();
+    // loop through input ports
+    for (let portName in source) {
+        if (!source.hasOwnProperty(portName)) {
+            continue;
+        }
+        const inPortSource = source[portName];
+        // loop through input port links
+        for (let id in inPortSource) {
+            if (!inPortSource.hasOwnProperty(id)) {
+                continue;
+            }
+            const ports = Array.isArray(inPortSource[id]) ? inPortSource[id] : [inPortSource[id]];
+            for (let port of ports) {
+                const hash = id + port;
+                // check for duplicities
+                if (checkUniqueIdPort && resolvedScopes.has(hash)) {
+                    continue;
+                }
+                resolvedScopes.add(hash);
+                yield {
+                    id,
+                    port,
+                    inPortName: portName
+                };
+            }
+        }
+    }
+}
+
+/**
+ * Returns generator, which loops over all output links from a component's output port.
+ * @param {Object} descriptor
+ * @param {string} cid - component Id
+ * @param {string} outputPort
+ * @return {Iterator<*>}
+ */
+function* allOutputLinks(descriptor, cid, outputPort) {
+
+    for (let componentId in descriptor) {
+        if (!descriptor.hasOwnProperty(componentId)) {
+            continue;
+        }
+
+        let source = descriptor[componentId].source;
+        for (let inputPort in source) {
+            if (!source.hasOwnProperty(inputPort)) {
+                continue;
+            }
+
+            let sourceInput = source[inputPort];
+            for (let sourceComponentId in sourceInput) {
+                if (!sourceInput.hasOwnProperty(sourceComponentId)) {
+                    continue;
+                }
+
+                if (sourceComponentId !== cid) {
+                    continue;
+                }
+
+                const ports = Array.isArray(sourceInput[sourceComponentId]) ?
+                    sourceInput[sourceComponentId] : [sourceInput[sourceComponentId]];
+
+                if (ports.indexOf(outputPort) !== -1) {
+                    yield {
+                        componentId,
+                        inputPort
+                    };
+                }
+            }
+        }
+    }
+}
+
+module.exports = {
+    ComponentDescriptor: {
+        allInputLinks,
+        allOutputLinks
+    }
+};

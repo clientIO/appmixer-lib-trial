@@ -1,1 +1,3 @@
-"use strict";module.exports=require("./ApiDriver");
+'use strict';
+
+module.exports = require('./ApiDriver');
